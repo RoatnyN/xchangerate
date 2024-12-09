@@ -2,11 +2,11 @@ name: Run Xchange.py
 
 on:
   schedule:
-    # This will run the script every day at midnight UTC
-    - cron: '15 10 * * *'
+    - cron: '15 10 * * *'  # Scheduled run
   push:
     branches:
-      - main  # Change if your default branch is different
+      - main
+  workflow_dispatch:  # Enable manual trigger
 
 jobs:
   run-scraper:
