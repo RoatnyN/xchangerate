@@ -3,7 +3,7 @@ name: Run Xchange.py
 on:
   schedule:
     # This will run the script every day at midnight UTC
-    - cron: '16 15 * * *'
+    - cron: '0 10 * * *'
   push:
     branches:
       - main  # Change if your default branch is different
