@@ -26,7 +26,8 @@ rate_text = rate_element.get_text(strip=True) if rate_element else "Rate not fou
 currency_pair = "KHR/USD"  # Static value as it is fixed in the HTML structure
 
 # Define the folder path in your OneDrive
-folder_path = "/Users/roatny/Library/CloudStorage/OneDrive-GSNCMNW/MNW_Dataset"
+# Use a relative path or environment variable for flexibility
+folder_path = os.path.expanduser("~/OneDrive/MNW_Dataset")  # Adjust this as needed
 
 # Ensure the folder exists
 os.makedirs(folder_path, exist_ok=True)
