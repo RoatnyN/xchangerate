@@ -1,4 +1,4 @@
-name: Run Scraping Script
+name: Run Xchange.py
 
 on:
   schedule:
