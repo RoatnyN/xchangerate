@@ -28,4 +28,4 @@ jobs:
 
       - name: Run the scraping script
         run: |
-          python Xchnage.py  # Ensure the correct script name is used
+          python Xchange.py  # Ensure the correct script name is used
