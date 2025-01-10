@@ -30,8 +30,11 @@ data_to_upload = [date_text, rate_text, "KHR/USD"]
 
 # Upload to SharePoint
 sharepoint_url = os.environ['SHAREPOINT_URL']
-username = os.environ['SHAREPOINT_USERNAME']
-password = os.environ['SHAREPOINT_PASSWORD']
+tenant_id = os.environ['TENANT_ID']
+client_id = os.environ['CLIENT_ID']
+client_secret = os.environ['CLIENT_SECRET']
+site_id = os.environ['SITE_ID']
+drive_id = os.environ['DRIVE_ID']
 
 # Define the CSV filename
 csv_filename = "exchange_rate_data.csv"
@@ -43,13 +46,30 @@ with open(csv_file_path, 'w', newline='') as csvfile:
     csv_writer.writerow(["Date", "Exchange Rate", "Currency Pair"])
     csv_writer.writerow(data_to_upload)
 
+# Function to get access token
+def get_access_token(tenant_id, client_id, client_secret):
+    url = f'https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token'
+    data = {
+        'grant_type': 'client_credentials',
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'scope': 'https://graph.microsoft.com/.default'
+    }
+    response = requests.post(url, data=data)
+    response.raise_for_status()  # Raise an error for bad responses
+    return response.json().get('access_token')
+
+# Get the access token
+access_token = get_access_token(tenant_id, client_id, client_secret)
+
 # Upload the CSV file to SharePoint
-upload_url = f"{sharepoint_url}/{csv_filename}"
+upload_url = f"https://graph.microsoft.com/v1.0/sites/{site_id}/drives/{drive_id}/root:/{csv_filename}:/content"
 with open(csv_file_path, 'rb') as file:
     headers = {
+        'Authorization': f'Bearer {access_token}',
         'Content-Type': 'application/octet-stream',
     }
-    response = requests.put(upload_url, auth=(username, password), headers=headers, data=file)
+    response = requests.put(upload_url, headers=headers, data=file)
 
     # Check if the upload was successful
     if response.status_code in [200, 201]:
