@@ -26,13 +26,8 @@ rate_text = rate_element.get_text(strip=True) if rate_element else "Rate not fou
 currency_pair = "KHR/USD"  # Static value as it is fixed in the HTML structure
 
 # Define the folder path in your OneDrive
-# Use a relative path or environment variable for flexibility
 folder_path = os.path.expanduser("~/OneDrive/MNW_Dataset")  # Adjust this as needed
-
-# Ensure the folder exists
 os.makedirs(folder_path, exist_ok=True)
-
-# Define the file path inside the folder
 file_path = os.path.join(folder_path, "Xchange.csv")
 
 # Check if the file exists
@@ -44,10 +39,16 @@ row = [date_text, rate_text, currency_pair]
 # Write or append the data
 with open(file_path, "a", newline="") as csvfile:
     csvwriter = csv.writer(csvfile)
-    # Write the header only if the file does not exist
     if not file_exists:
         csvwriter.writerow(["Date", "Exchange Rate", "Currency Pair"])
-    # Append the new row
     csvwriter.writerow(row)
 
-print(f"Exchange rate details saved to {file_path}")
+# Upload to SharePoint
+sharepoint_url = os.environ['SHAREPOINT_URL']
+username = os.environ['SHAREPOINT_USERNAME']
+password = os.environ['SHAREPOINT_PASSWORD']
+
+with open(file_path, 'rb') as file:
+    requests.post(sharepoint_url, auth=(username, password), files={'file': file})
+
+print(f"Exchange rate details saved to {file_path} and uploaded to SharePoint.")
