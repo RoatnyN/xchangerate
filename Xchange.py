@@ -28,13 +28,13 @@ if date_text == "Date not found" or rate_text == "Rate not found":
 # Prepare the data to upload
 data_to_upload = [date_text, rate_text, "KHR/USD"]
 
-# Upload to SharePoint
-sharepoint_url = os.environ['SHAREPOINT_URL']
-username = os.environ['SHAREPOINT_USERNAME']
-password = os.environ['SHAREPOINT_PASSWORD']
+# SharePoint access credentials (hardcoded for testing)
+sharepoint_url = "https://minimumwage.sharepoint.com/sites/DATATEAM/Shared%20Documents/Economics/Economic/scrapping"
+username = "Roatnynuon@minimumwage.onmicrosoft.com"  # Replace with your SharePoint email
+password = "Nn@2024!!mnw"  # Replace with your SharePoint password
 
-# Define the CSV filename
-csv_filename = "exchange_rate_data.csv"
+# Define a unique filename
+csv_filename = f"exchange_rate_data_{date_text.replace('/', '-')}.csv"
 csv_file_path = os.path.join(tempfile.gettempdir(), csv_filename)
 
 # Write the data to the CSV file
@@ -45,6 +45,8 @@ with open(csv_file_path, 'w', newline='') as csvfile:
 
 # Upload the CSV file to SharePoint
 upload_url = f"{sharepoint_url}/{csv_filename}"
+print(f"Upload URL: {upload_url}")  # Debugging output
+
 with open(csv_file_path, 'rb') as file:
     headers = {
         'Content-Type': 'application/octet-stream',
@@ -52,6 +54,8 @@ with open(csv_file_path, 'rb') as file:
     response = requests.put(upload_url, auth=(username, password), headers=headers, data=file)
 
     # Check if the upload was successful
+    print(f"Response Status Code: {response.status_code}")
+    print(f"Response Content: {response.content}")  # Log the response content
     if response.status_code in [200, 201]:
         print("File uploaded successfully to SharePoint.")
     else:
