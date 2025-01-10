@@ -22,6 +22,10 @@ date_text = date_element.get_text(strip=True) if date_element else "Date not fou
 rate_element = soup.find_all("font", color="#FF3300")[1]
 rate_text = rate_element.get_text(strip=True) if rate_element else "Rate not found"
 
+# Debugging output
+print(f"Extracted Date: {date_text}")
+print(f"Extracted Rate: {rate_text}")
+
 # Prepare the data row
 row = [date_text, rate_text, "KHR/USD"]
 
