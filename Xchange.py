@@ -2,7 +2,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 import csv
-import tempfile 
+import tempfile
 
 # Define the URL
 url = "https://www.nbc.gov.kh/english/economic_research/exchange_rate.php"
@@ -33,8 +33,6 @@ sharepoint_url = os.environ['SHAREPOINT_URL']
 tenant_id = os.environ['TENANT_ID']
 client_id = os.environ['CLIENT_ID']
 client_secret = os.environ['CLIENT_SECRET']
-site_id = os.environ['SITE_ID']
-drive_id = os.environ['DRIVE_ID']
 
 # Define the CSV filename
 csv_filename = "exchange_rate_data.csv"
@@ -63,7 +61,7 @@ def get_access_token(tenant_id, client_id, client_secret):
 access_token = get_access_token(tenant_id, client_id, client_secret)
 
 # Upload the CSV file to SharePoint
-upload_url = f"https://graph.microsoft.com/v1.0/sites/{site_id}/drives/{drive_id}/root:/{csv_filename}:/content"
+upload_url = f"{sharepoint_url}{csv_filename}"
 with open(csv_file_path, 'rb') as file:
     headers = {
         'Authorization': f'Bearer {access_token}',
