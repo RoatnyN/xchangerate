@@ -2,7 +2,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 import csv
-
+import tempfile 
 # Define the URL
 url = "https://www.nbc.gov.kh/english/economic_research/exchange_rate.php"
 
