@@ -2,7 +2,6 @@ import os
 import requests
 from bs4 import BeautifulSoup
 import csv
-from datetime import datetime
 
 # Define the URL
 url = "https://www.nbc.gov.kh/english/economic_research/exchange_rate.php"
@@ -22,33 +21,33 @@ date_text = date_element.get_text(strip=True) if date_element else "Date not fou
 rate_element = soup.find_all("font", color="#FF3300")[1]
 rate_text = rate_element.get_text(strip=True) if rate_element else "Rate not found"
 
-# Extract the currency pair
-currency_pair = "KHR/USD"  # Static value as it is fixed in the HTML structure
-
-# Define the folder path in your OneDrive
-folder_path = os.path.expanduser("~/OneDrive/MNW_Dataset")  # Adjust this as needed
-os.makedirs(folder_path, exist_ok=True)
-file_path = os.path.join(folder_path, "Xchange.csv")
-
-# Check if the file exists
-file_exists = os.path.isfile(file_path)
-
-# Prepare the row to append
-row = [date_text, rate_text, currency_pair]
-
-# Write or append the data
-with open(file_path, "a", newline="") as csvfile:
-    csvwriter = csv.writer(csvfile)
-    if not file_exists:
-        csvwriter.writerow(["Date", "Exchange Rate", "Currency Pair"])
-    csvwriter.writerow(row)
+# Prepare the data row
+row = [date_text, rate_text, "KHR/USD"]
 
 # Upload to SharePoint
-sharepoint_url = os.environ['SHAREPOINT_URL']
+sharepoint_url = os.environ['SHAREPOINT_URL']  # Ensure this is the correct folder URL
 username = os.environ['SHAREPOINT_USERNAME']
 password = os.environ['SHAREPOINT_PASSWORD']
 
-with open(file_path, 'rb') as file:
-    requests.post(sharepoint_url, auth=(username, password), files={'file': file})
+# Define the CSV filename
+csv_filename = "exchange_rate_data.csv"
+csv_file_path = os.path.join(tempfile.gettempdir(), csv_filename)
 
-print(f"Exchange rate details saved to {file_path} and uploaded to SharePoint.")
+# Write the data to the CSV file
+with open(csv_file_path, 'w', newline='') as csvfile:
+    csv_writer = csv.writer(csvfile)
+    csv_writer.writerow(["Date", "Exchange Rate", "Currency Pair"])  # Write the header
+    csv_writer.writerow(row)  # Write the data row
+
+# Upload the CSV file to SharePoint
+with open(csv_file_path, 'rb') as file:
+    response = requests.post(sharepoint_url, auth=(username, password), files={'file': file})
+    
+    # Check if the upload was successful
+    if response.status_code == 200:
+        print("File uploaded successfully to SharePoint.")
+    else:
+        print(f"Failed to upload file. Status code: {response.status_code}, Response: {response.text}")
+
+# Optionally, delete the local CSV file after upload
+os.remove(csv_file_path)
