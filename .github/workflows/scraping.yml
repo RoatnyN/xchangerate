@@ -2,7 +2,7 @@ name: Run Xchange.py
 
 on:
   schedule:
-    - cron: '15 10 * * *'  # Scheduled run
+    - cron: '15 10 * * *'  # Scheduled run at 10:15 AM UTC daily
   push:
     branches:
       - main
@@ -29,7 +29,8 @@ jobs:
       - name: Run the scraping script
         env:  # Add environment variables for SharePoint
           SHAREPOINT_URL: ${{ secrets.SHAREPOINT_URL }}
-          SHAREPOINT_USERNAME: ${{ secrets.SHAREPOINT_USERNAME }}
-          SHAREPOINT_PASSWORD: ${{ secrets.SHAREPOINT_PASSWORD }}
+          TENANT_ID: ${{ secrets.TENANT_ID }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         run: |
           python Xchange.py  # Ensure the correct script name is used
