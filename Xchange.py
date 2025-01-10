@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import tempfile 
+
 # Define the URL
 url = "https://www.nbc.gov.kh/english/economic_research/exchange_rate.php"
 
@@ -40,11 +41,15 @@ with open(csv_file_path, 'w', newline='') as csvfile:
     csv_writer.writerow(row)  # Write the data row
 
 # Upload the CSV file to SharePoint
+upload_url = f"{sharepoint_url}/{csv_filename}"  # Full URL for the file upload
 with open(csv_file_path, 'rb') as file:
-    response = requests.post(sharepoint_url, auth=(username, password), files={'file': file})
+    headers = {
+        'Content-Type': 'application/octet-stream',  # Adjust if necessary
+    }
+    response = requests.put(upload_url, auth=(username, password), headers=headers, data=file)
     
     # Check if the upload was successful
-    if response.status_code == 200:
+    if response.status_code in [200, 201]:
         print("File uploaded successfully to SharePoint.")
     else:
         print(f"Failed to upload file. Status code: {response.status_code}, Response: {response.text}")
