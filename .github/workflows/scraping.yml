@@ -1,35 +1,32 @@
 name: Run Xchange.py
-
 on:
-  schedule:
-    - cron: '15 10 * * *'  # Scheduled run
-  push:
-    branches:
-      - main
-  workflow_dispatch:  # Enable manual trigger
-
+schedule:
+- cron: '15 10 * * *' # Scheduled run
+push:
+branches:
+- main
+workflow_dispatch: # Enable manual trigger
 jobs:
-  run-scraper:
-    runs-on: ubuntu-latest
+run-scraper:
+runs-on: ubuntu-latest
+steps:
+  - name: Checkout code
+    uses: actions/checkout@v2
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  - name: Set up Python
+    uses: actions/setup-python@v2
+    with:
+      python-version: '3.12'  # Specify your Python version
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.12'  # Specify your Python version
+  - name: Install dependencies
+    run: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt  # Ensure this file exists
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt  # Ensure this file exists
-
-      - name: Run the scraping script
-        env:  # Add environment variables for SharePoint
-          SHAREPOINT_URL: "https://minimumwage.sharepoint.com/sites/DATATEAM/Shared%20Documents/Economics/Economic/scrapping"
-          SHAREPOINT_USERNAME: "Roatnynuon@minimumwage.onmicrosoft.com"  # Replace with your SharePoint email
-          SHAREPOINT_PASSWORD: "Nn@2024!!mnw"  # Replace with your SharePoint password
-        run: |
-          python Xchange.py  # Ensure the correct script name is used
+  - name: Run the scraping script
+    env:  # Add environment variables for SharePoint
+      SHAREPOINT_URL: ${{ secrets.SHAREPOINT_URL }}
+      SHAREPOINT_USERNAME: ${{ secrets.SHAREPOINT_USERNAME }}
+      SHAREPOINT_PASSWORD: ${{ secrets.SHAREPOINT_PASSWORD }}
+    run: |
+      python Xchange.py  # Ensure the correct script name is used
