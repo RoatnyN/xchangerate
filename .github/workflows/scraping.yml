@@ -28,8 +28,8 @@ jobs:
 
       - name: Run the scraping script
         env:  # Add environment variables for SharePoint
-          SHAREPOINT_URL: ${{ secrets.SHAREPOINT_URL }}
-          SHAREPOINT_USERNAME: ${{ secrets.SHAREPOINT_USERNAME }}
-          SHAREPOINT_PASSWORD: ${{ secrets.SHAREPOINT_PASSWORD }}
+          SHAREPOINT_URL: "https://minimumwage.sharepoint.com/sites/DATATEAM/Shared%20Documents/Economics/Economic/scrapping"
+          SHAREPOINT_USERNAME: "Roatnynuon@minimumwage.onmicrosoft.com"  # Replace with your SharePoint email
+          SHAREPOINT_PASSWORD: "Nn@2024!!mnw"  # Replace with your SharePoint password
         run: |
           python Xchange.py  # Ensure the correct script name is used
