@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import csv
 import tempfile
+import urllib.parse
 
 # Define the URL
 url = "https://www.nbc.gov.kh/english/economic_research/exchange_rate.php"
@@ -58,9 +59,14 @@ sharepoint_url = os.environ['SHAREPOINT_URL']
 # Get the access token
 access_token = get_access_token(tenant_id, client_id, client_secret)
 
-# Upload the CSV file to SharePoint
-upload_url = f"{sharepoint_url}/_api/web/GetFolderByServerRelativeUrl('Documents')/Files/add(overwrite=true,url='{csv_filename}')"
+# Encode the folder path to ensure special characters are handled correctly
+folder_path = "Shared Documents/Economics/Economic/scrapping"
+encoded_folder_path = urllib.parse.quote(folder_path)
 
+# Construct the upload URL
+upload_url = f"{sharepoint_url}/_api/web/GetFolderByServerRelativeUrl('{encoded_folder_path}')/Files/add(overwrite=true,url='{csv_filename}')"
+
+# Upload the CSV file to SharePoint
 with open(csv_file_path, 'rb') as file:
     headers = {
         'Authorization': f'Bearer {access_token}',
@@ -73,4 +79,5 @@ with open(csv_file_path, 'rb') as file:
     else:
         print(f"Failed to upload file. Status code: {response.status_code}, Response: {response.text}")
 
+# Remove the temporary file
 os.remove(csv_file_path)
