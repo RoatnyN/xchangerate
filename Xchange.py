@@ -1,6 +1,7 @@
 import os
 import requests
 import tempfile
+import urllib.parse  # Make sure to import this
 
 # Get environment variables
 tenant_id = os.environ['TENANT_ID']
