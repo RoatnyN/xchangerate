@@ -64,7 +64,7 @@ folder_path = "Shared%20Documents/Economics/Economic/scrapping"
 encoded_folder_path = urllib.parse.quote(folder_path)
 
 # Construct the upload URL
-https://minimumwage.sharepoint.com/sites/DATATEAM/_api/web/GetFolderByServerRelativeUrl('Shared%20Documents/Economics/Economic/scrapping')/Files/add(overwrite=true,url='exchange_rate_data.csv')
+upload_url = f"{sharepoint_url}/_api/web/GetFolderByServerRelativeUrl('{encoded_folder_path}')/Files/add(overwrite=true,url='{csv_filename}')"
 
 # Upload the CSV file to SharePoint
 with open(csv_file_path, 'rb') as file:
