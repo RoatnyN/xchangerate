@@ -60,7 +60,7 @@ sharepoint_url = os.environ['SHAREPOINT_URL']
 access_token = get_access_token(tenant_id, client_id, client_secret)
 
 # Encode the folder path to ensure special characters are handled correctly
-folder_path = "Shared Documents/Economics/Economic/scrapping"
+folder_path = "Shared%20Documents/Economics/Economic/scrapping"
 encoded_folder_path = urllib.parse.quote(folder_path)
 
 # Construct the upload URL
