@@ -36,7 +36,7 @@ jobs:
         run: mkdir -p data
 
       - name: Run scraper
-        run: python xchangerate.py
+        run: python Xchange.py
 
       - name: Commit updated CSV back to repo (if changed)
         run: |
