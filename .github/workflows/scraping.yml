@@ -3,7 +3,7 @@ name: Exchange Rate Scraper
 on:
   schedule:
     # Runs daily at 08:00 Asia/Phnom_Penh (UTC+7) -> that's 01:00 UTC
-    - cron: "0 1 * * *"
+    - cron: "30 9 * * *"
   workflow_dispatch:    # lets you run manually from GitHub Actions tab
   push:                 # also run whenever you push changes
     branches:
