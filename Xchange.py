@@ -1,14 +1,14 @@
 import os
 import requests
+from bs4 import BeautifulSoup
 import csv
 import urllib3
-import io
 
 # 1. Setup & Silence SSL Warnings
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# This is the direct CSV download link for that specific dataset
-CSV_URL = "https://data.mef.gov.kh/api/v1/public-datasets/pd_66a0cd503e0bd300012638fb4/download/csv"
+# We use the Tax.gov.kh site because it's more stable for cloud scrapers
+URL = "https://www.tax.gov.kh/en/exchange-rate"
 
 REPO_ROOT = os.path.dirname(os.path.abspath(__file__))
 data_dir = os.path.join(REPO_ROOT, "data")
@@ -20,24 +20,22 @@ headers = {
 }
 
 try:
-    print("Attempting to fetch latest data...")
-    # 2. Get the file (verify=False handles the SSL issue)
-    response = requests.get(CSV_URL, headers=headers, timeout=30, verify=False)
+    print(f"Connecting to GDT to fetch NBC rates...")
+    response = requests.get(URL, headers=headers, timeout=30, verify=False)
     response.raise_for_status()
 
-    # 3. Parse the CSV content from the response
-    content = response.content.decode('utf-8')
-    csv_data = list(csv.reader(io.StringIO(content)))
+    soup = BeautifulSoup(response.text, "html.parser")
+    
+    # Find the first row in the exchange rate table
+    # On GDT, the first <tr> after <thead> usually contains the latest rate
+    table_row = soup.find("table").find("tbody").find("tr")
+    cols = table_row.find_all("td")
 
-    if len(csv_data) > 1:
-        # The first row is the header, the second row is usually the latest data
-        latest_row = csv_data[1] 
-        
-        # Adjust these indices based on the MEF CSV structure
-        # Usually: [Date, Rate, Currency, ...]
-        date_text = latest_row[0]
-        rate_text = latest_row[1]
-        currency_pair = "KHR/USD"
+    if len(cols) >= 3:
+        # GDT Table Format: [Release Date, Symbol, Official Rate, Published By]
+        date_text = cols[0].get_text(strip=True)
+        rate_text = cols[2].get_text(strip=True)
+        currency_pair = cols[1].get_text(strip=True) # Usually "USD/KHR"
 
         file_exists = os.path.isfile(file_path)
         final_row = [date_text, rate_text, currency_pair]
@@ -48,10 +46,10 @@ try:
                 csvwriter.writerow(["Date", "Exchange Rate", "Currency Pair"])
             csvwriter.writerow(final_row)
 
-        print(f"Success! Captured Rate: {rate_text} for Date: {date_text}")
+        print(f"Success! Captured: {currency_pair} {rate_text} for {date_text}")
     else:
-        print("File downloaded but no data rows found.")
+        print("Could not find data in the table.")
 
 except Exception as e:
-    print(f"Failed again: {e}")
+    print(f"Failed to scrape GDT: {e}")
     exit(1)
